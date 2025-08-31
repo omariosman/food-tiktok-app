@@ -1,0 +1,28 @@
+{
+  "name": "food-tiktok-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Food delivery MVP application with React Native and Node.js",
+  "workspaces": [
+    "backend",
+    "mobile", 
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:mobile\"",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:mobile": "npm run dev --workspace=mobile",
+    "build": "npm run build --workspace=backend && npm run build --workspace=mobile",
+    "test": "npm run test --workspace=backend && npm run test --workspace=mobile",
+    "test:e2e": "npm run test:e2e --workspace=mobile",
+    "lint": "npm run lint --workspace=backend && npm run lint --workspace=mobile && npm run lint --workspace=shared",
+    "typecheck": "npm run typecheck --workspace=backend && npm run typecheck --workspace=mobile && npm run typecheck --workspace=shared"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
