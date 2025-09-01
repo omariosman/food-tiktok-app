@@ -1,39 +1,107 @@
-import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import { useAuth } from '../contexts/AuthContext'
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth()
+  const [activeTab, setActiveTab] = useState('foodCourt')
+
+  const joinDate = new Date(2024, 0, 1) // January 1, 2024
+  const formattedJoinDate = joinDate.getFullYear()
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Profile</Text>
       
-      <View style={styles.content}>
-        <View style={styles.profileSection}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
-              {user?.email?.charAt(0).toUpperCase() || 'U'}
-            </Text>
-          </View>
-          <Text style={styles.email}>{user?.email}</Text>
-          <Text style={styles.userId}>ID: {user?.id?.slice(0, 8)}...</Text>
+      {/* Enhanced Profile Header */}
+      <View style={styles.profileHeader}>
+        <View style={styles.avatarContainer}>
+          <Image 
+            source={{ uri: 'https://via.placeholder.com/120x120/ddd/999?text=User' }}
+            style={styles.avatar}
+          />
         </View>
-
-        <View style={styles.placeholderSection}>
-          <Text style={styles.placeholderText}>
-            👤 Profile features will be here
-          </Text>
-          <Text style={styles.description}>
-            This is where users can manage their profile, view order history, settings, and account preferences.
-          </Text>
-        </View>
-
-        <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
-          <Text style={styles.logoutButtonText}>Sign Out</Text>
-        </TouchableOpacity>
+        <Text style={styles.fullName}>John Doe</Text>
+        <Text style={styles.username}>@johndoe</Text>
+        <Text style={styles.memberSince}>Real Eater Since {formattedJoinDate}</Text>
       </View>
-    </View>
+
+      {/* Stats Section */}
+      <View style={styles.statsSection}>
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statLabel}>Followers</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statLabel}>Following</Text>
+          </View>
+        </View>
+        
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.profileButton}>
+            <Text style={styles.profileButtonText}>Manage Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.profileButton}>
+            <Text style={styles.profileButtonText}>Share Profile</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Savings Banner */}
+      <LinearGradient
+        colors={['#FF8C00', '#FFA500']}
+        style={styles.savingsBanner}
+      >
+        <Text style={styles.savingsText}>$0.00 saved with promos and discounts</Text>
+      </LinearGradient>
+
+      {/* Food Court Section */}
+      <View style={styles.foodCourtSection}>
+        <View style={styles.tabSelector}>
+          <TouchableOpacity 
+            style={[styles.tab, activeTab === 'foodCourt' && styles.activeTab]}
+            onPress={() => setActiveTab('foodCourt')}
+          >
+            <Text style={[styles.tabText, activeTab === 'foodCourt' && styles.activeTabText]}>Food Court</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.tab, activeTab === 'orderHistory' && styles.activeTab]}
+            onPress={() => setActiveTab('orderHistory')}
+          >
+            <Text style={[styles.tabText, activeTab === 'orderHistory' && styles.activeTabText]}>Order History</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.tabContent}>
+          {activeTab === 'foodCourt' && (
+            <View style={styles.foodCourtContent}>
+              <Text style={styles.sectionTitle}>My Food Court</Text>
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyStateText}>0 places</Text>
+                <Text style={styles.emptyStateSubtext}>Save your favorite restaurants here</Text>
+              </View>
+            </View>
+          )}
+          
+          {activeTab === 'orderHistory' && (
+            <View style={styles.orderHistoryContent}>
+              <Text style={styles.sectionTitle}>Order History</Text>
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyStateText}>No orders yet</Text>
+                <Text style={styles.emptyStateSubtext}>Your order history will appear here</Text>
+              </View>
+            </View>
+          )}
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
+        <Text style={styles.logoutButtonText}>Sign Out</Text>
+      </TouchableOpacity>
+    </ScrollView>
   )
 }
 
@@ -50,59 +118,154 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
   },
-  content: {
-    flex: 1,
+  
+  // Enhanced Profile Header
+  profileHeader: {
+    alignItems: 'center',
     paddingHorizontal: 20,
+    paddingBottom: 30,
   },
-  profileSection: {
-    alignItems: 'center',
-    paddingVertical: 30,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    marginBottom: 30,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#007AFF',
-    justifyContent: 'center',
-    alignItems: 'center',
+  avatarContainer: {
     marginBottom: 16,
   },
-  avatarText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
   },
-  email: {
-    fontSize: 18,
-    fontWeight: '600',
+  fullName: {
+    fontSize: 24,
+    fontWeight: 'bold',
     color: '#1a1a1a',
     marginBottom: 4,
   },
-  userId: {
+  username: {
+    fontSize: 16,
+    color: '#FF8C00',
+    marginBottom: 8,
+  },
+  memberSince: {
     fontSize: 14,
     color: '#666',
   },
-  placeholderSection: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+
+  // Stats Section
+  statsSection: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
-  placeholderText: {
-    fontSize: 24,
-    textAlign: 'center',
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginBottom: 20,
   },
-  description: {
+  statItem: {
+    alignItems: 'center',
+    marginHorizontal: 30,
+  },
+  statNumber: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+  },
+  statLabel: {
+    fontSize: 14,
+    color: '#666',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  profileButton: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  profileButtonText: {
+    fontSize: 14,
+    color: '#1a1a1a',
+    fontWeight: '500',
+  },
+
+  // Savings Banner
+  savingsBanner: {
+    marginHorizontal: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+  savingsText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+    textAlign: 'center',
+  },
+
+  // Food Court Section
+  foodCourtSection: {
+    paddingHorizontal: 20,
+    marginBottom: 30,
+  },
+  tabSelector: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  activeTab: {
+    borderBottomColor: '#FF8C00',
+  },
+  tabText: {
     fontSize: 16,
     color: '#666',
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 40,
   },
+  activeTabText: {
+    color: '#FF8C00',
+    fontWeight: '600',
+  },
+  tabContent: {
+    minHeight: 200,
+  },
+  foodCourtContent: {
+    flex: 1,
+  },
+  orderHistoryContent: {
+    flex: 1,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+    marginBottom: 20,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyStateText: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 8,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: '#999',
+  },
+
+  // Logout Button
   logoutButton: {
+    marginHorizontal: 20,
     height: 50,
     backgroundColor: '#ff4444',
     borderRadius: 12,
