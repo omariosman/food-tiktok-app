@@ -4,30 +4,31 @@ import {
   StyleSheet, 
   Dimensions,
   Alert,
-  Share,
-  Animated,
-  ActivityIndicator,
   Text,
   TouchableOpacity
 } from 'react-native'
-import { GestureHandlerRootView, PanGestureHandler, State } from 'react-native-gesture-handler'
-import FeedCard from '../components/FeedCard'
+import Animated from 'react-native-reanimated'
+import { GestureHandlerRootView, TapGestureHandler } from 'react-native-gesture-handler'
+import { useFocusEffect } from '@react-navigation/native'
+
+import EnhancedFeedCard from '../components/EnhancedFeedCard'
 import SwipeInstructions from '../components/SwipeInstructions'
+import { FeedCardSkeleton, LoadingOverlay } from '../components/SkeletonLoader'
 import { useFeedScroll } from '../hooks/useFeedScroll'
+import { useFeedGestures } from '../hooks/useFeedGestures'
 import { saveDish, removeSavedDish } from '../services/savedDishesService'
 import { useAuth } from '../contexts/AuthContext'
+import { hapticFeedback } from '../utils/feedAnimations'
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
 
-export default function ExploreScreen() {
+export default function EnhancedExploreScreen() {
   const [showInstructions, setShowInstructions] = useState(true)
-  const [lastTap, setLastTap] = useState(null)
   const [isRestaurantMode, setIsRestaurantMode] = useState(false)
+  const [retryAttempts, setRetryAttempts] = useState(0)
   
   const { user } = useAuth()
-  const translateY = useRef(new Animated.Value(0)).current
-  const panRef = useRef()
-
+  
   // Use the feed scroll hook for all feed management
   const {
     currentItem,
@@ -49,6 +50,29 @@ export default function ExploreScreen() {
     handleViewStart
   } = useFeedScroll()
 
+  // Enhanced gesture handling
+  const {
+    panRef,
+    singleTapRef,
+    doubleTapRef,
+    panGestureHandler,
+    singleTapGestureHandler,
+    doubleTapGestureHandler,
+    cardAnimatedStyle,
+    backgroundCardAnimatedStyle,
+    resetAnimations,
+    triggerSwipeAnimation,
+    gestureActive
+  } = useFeedGestures({
+    onSwipeUp: handleSwipeUp,
+    onSwipeDown: handleSwipeDown,
+    onSwipeLeft: handleSwipeLeft,
+    onSwipeRight: handleSwipeRight,
+    onDoubleTap: handleDoubleTap,
+    onSingleTap: handleSingleTap,
+    onVideoTap: handleVideoTap
+  })
+
   // Auto-hide instructions after 5 seconds
   useEffect(() => {
     if (showInstructions) {
@@ -59,59 +83,59 @@ export default function ExploreScreen() {
     }
   }, [showInstructions])
 
-  // Start view tracking when component mounts
+  // Start view tracking when component mounts or current item changes
   useEffect(() => {
     if (currentItem) {
       handleViewStart()
     }
   }, [currentItem, handleViewStart])
 
-  const handleGesture = Animated.event(
-    [{ nativeEvent: { translationY: translateY } }],
-    { useNativeDriver: true }
+  // Focus effect to track screen visibility
+  useFocusEffect(
+    React.useCallback(() => {
+      // Screen became focused, ensure current view tracking
+      if (currentItem) {
+        handleViewStart()
+      }
+      
+      return () => {
+        // Screen lost focus, track current view
+        trackCurrentView()
+      }
+    }, [currentItem, handleViewStart, trackCurrentView])
   )
 
-  const handleGestureEnd = (event) => {
-    const { translationY, velocityY } = event.nativeEvent
-    const startTime = Date.now()
-    
-    // Dismiss instructions if visible
+  /**
+   * Gesture handlers
+   */
+  function handleSwipeUp() {
     if (showInstructions) {
       setShowInstructions(false)
     }
-
-    // Track view time before switching
+    
     trackCurrentView()
-
-    // Determine swipe direction
-    const threshold = screenHeight * 0.2
-    const velocity = Math.abs(velocityY)
-
-    if (Math.abs(translationY) > threshold || velocity > 500) {
-      if (translationY > 0) {
-        // Swipe down - previous dish
-        goToPrevious()
-      } else {
-        // Swipe up - next dish
-        const viewTime = Date.now() - startTime
-        if (viewTime < 1000) {
-          // Fast swipe = skip
-          handleSkip(currentItem, viewTime)
-        }
-        goToNext()
-      }
+    
+    // Check if this is a fast swipe (< 1 second view time)
+    const viewTime = Date.now() - (currentItem?.viewStartTime || Date.now())
+    if (viewTime < 1000) {
+      handleSkip(currentItem, viewTime)
     }
-
-    // Reset animation
-    Animated.spring(translateY, {
-      toValue: 0,
-      useNativeDriver: true,
-      tension: 100,
-      friction: 8,
-    }).start()
+    
+    triggerSwipeAnimation('up')
+    goToNext()
   }
 
-  const handleSwipeLeft = async () => {
+  function handleSwipeDown() {
+    if (showInstructions) {
+      setShowInstructions(false)
+    }
+    
+    trackCurrentView()
+    triggerSwipeAnimation('down')
+    goToPrevious()
+  }
+
+  async function handleSwipeLeft() {
     // Show more dishes from the same restaurant
     if (currentItem && currentItem.restaurantId) {
       try {
@@ -125,40 +149,45 @@ export default function ExploreScreen() {
             { text: 'Back to Main Feed', onPress: () => {
               setIsRestaurantMode(false)
               returnToMainFeed()
+              resetAnimations()
             }},
             { text: 'Continue', style: 'cancel' }
           ]
         )
       } catch (error) {
         Alert.alert('Error', 'Could not load restaurant dishes')
+        hapticFeedback.error()
       }
     } else {
       Alert.alert('No Restaurant', 'Restaurant information not available')
+      hapticFeedback.warning()
     }
   }
 
-  const handleDoubleTap = () => {
-    // Double tap to like/save
-    if (currentItem) {
-      handleLike(currentItem)
+  function handleSwipeRight() {
+    // Could be used for other features like filters or discovery
+    hapticFeedback.light()
+  }
+
+  function handleDoubleTap() {
+    // Double tap functionality is handled in EnhancedFeedCard
+    // This is just for the gesture detection
+  }
+
+  function handleSingleTap() {
+    if (showInstructions) {
+      setShowInstructions(false)
     }
   }
 
-  const handleSingleTap = () => {
-    const now = Date.now()
-    const DOUBLE_PRESS_DELAY = 300
-
-    if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
-      handleDoubleTap()
-    } else {
-      setLastTap(now)
-      // Hide instructions on single tap
-      if (showInstructions) {
-        setShowInstructions(false)
-      }
-    }
+  function handleVideoTap() {
+    // Video controls are handled in EnhancedMediaPlayer
+    hapticFeedback.light()
   }
 
+  /**
+   * Feed interaction handlers
+   */
   const handleSave = async (dish) => {
     if (!user) {
       Alert.alert('Login Required', 'Please login to save dishes')
@@ -177,28 +206,19 @@ export default function ExploreScreen() {
         }
       }
       
-      const action = dish.isSaved ? 'removed from' : 'added to'
-      Alert.alert('Success', `${dish.name} ${action} your saved dishes`)
-      
     } catch (error) {
       console.error('Error saving dish:', error)
       Alert.alert('Error', 'Failed to save dish. Please try again.')
+      hapticFeedback.error()
     }
   }
 
-  const handleShare = async (dish) => {
+  const handleShare = async (dish, platform = 'native') => {
     try {
-      // Track share interaction
-      await handleFeedShare(dish, 'native')
-      
-      // Native share
-      await Share.share({
-        message: `Check out this amazing ${dish.name} from ${dish.restaurantName}! Only $${dish.price}`,
-        title: dish.name,
-        url: dish.imageUrl,
-      })
+      await handleFeedShare(dish, platform)
     } catch (error) {
       console.error('Error sharing:', error)
+      hapticFeedback.error()
     }
   }
 
@@ -213,7 +233,7 @@ export default function ExploreScreen() {
   const handleAddToCart = (dish) => {
     Alert.alert(
       'Added to Cart',
-      `${dish.name} - $${dish.price}`,
+      `${dish.name} - $${typeof dish.price === 'number' ? dish.price.toFixed(2) : dish.price}`,
       [
         { text: 'Continue Shopping', style: 'cancel' },
         { text: 'View Cart', onPress: () => console.log('Navigate to cart') }
@@ -248,32 +268,77 @@ export default function ExploreScreen() {
     Alert.alert('Search', 'Search functionality coming soon!')
   }
 
-  // Loading state
-  if (loading) {
+  /**
+   * Error handling with retry logic
+   */
+  const handleRetry = async () => {
+    if (retryAttempts >= 3) {
+      Alert.alert(
+        'Connection Issues',
+        'Please check your internet connection and try again later.',
+        [{ text: 'OK' }]
+      )
+      return
+    }
+    
+    setRetryAttempts(prev => prev + 1)
+    hapticFeedback.light()
+    await refreshFeed()
+  }
+
+  // Reset retry attempts on successful load
+  useEffect(() => {
+    if (!error && !loading) {
+      setRetryAttempts(0)
+    }
+  }, [error, loading])
+
+  // Loading state with skeleton
+  if (loading && !currentItem) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FF6B00" />
-        <Text style={styles.loadingText}>Loading amazing dishes...</Text>
+      <View style={styles.container}>
+        <FeedCardSkeleton />
       </View>
     )
   }
 
-  // Error state
-  if (error) {
+  // Error state with retry functionality
+  if (error && !currentItem) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>⚠️</Text>
         <Text style={styles.errorTitle}>Something went wrong</Text>
-        <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity style={styles.retryButton} onPress={refreshFeed}>
-          <Text style={styles.retryButtonText}>Try Again</Text>
+        <Text style={styles.errorText}>
+          {error}
+          {retryAttempts > 0 && `\n\nAttempt ${retryAttempts}/3`}
+        </Text>
+        <TouchableOpacity 
+          style={styles.retryButton} 
+          onPress={handleRetry}
+          disabled={retryAttempts >= 3}
+        >
+          <Text style={styles.retryButtonText}>
+            {retryAttempts >= 3 ? 'Max Retries Reached' : 'Try Again'}
+          </Text>
         </TouchableOpacity>
+        
+        {retryAttempts >= 3 && (
+          <TouchableOpacity 
+            style={[styles.retryButton, styles.refreshButton]} 
+            onPress={() => {
+              setRetryAttempts(0)
+              refreshFeed()
+            }}
+          >
+            <Text style={styles.retryButtonText}>Refresh</Text>
+          </TouchableOpacity>
+        )}
       </View>
     )
   }
 
   // No items state
-  if (!currentItem) {
+  if (!currentItem && !loading) {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyIcon}>🍽️</Text>
@@ -288,84 +353,86 @@ export default function ExploreScreen() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <PanGestureHandler
+      {/* Background card (next item preview) */}
+      <Animated.View style={[styles.backgroundCard, backgroundCardAnimatedStyle]}>
+        <FeedCardSkeleton />
+      </Animated.View>
+      
+      {/* Main card with gestures */}
+      <TapGestureHandler
         ref={panRef}
-        onGestureEvent={handleGesture}
-        onHandlerStateChange={({ nativeEvent }) => {
-          if (nativeEvent.state === State.END) {
-            handleGestureEnd(nativeEvent)
-          }
-        }}
+        onGestureEvent={panGestureHandler}
+        onHandlerStateChange={panGestureHandler}
+        simultaneousHandlers={[singleTapRef, doubleTapRef]}
       >
-        <Animated.View 
-          style={[
-            styles.cardContainer,
-            {
-              transform: [{ translateY }]
-            }
-          ]}
-          onStartShouldSetResponder={() => true}
-          onResponderGrant={handleSingleTap}
-        >
-          <FeedCard
-            dish={currentItem}
-            isActive={true}
-            onSave={handleSave}
-            onShare={handleShare}
-            onReviews={handleReviews}
-            onAddToCart={handleAddToCart}
-            onMenu={handleMenu}
-            onLocationPress={handleLocationPress}
-            onFilterPress={handleFilterPress}
-            onSearchPress={handleSearchPress}
-          />
-
-          {/* Loading more indicator */}
-          {loadingMore && (
-            <View style={styles.loadingMoreContainer}>
-              <ActivityIndicator size="small" color="#FF6B00" />
-              <Text style={styles.loadingMoreText}>Loading more...</Text>
-            </View>
-          )}
-
-          {/* End of feed indicator */}
-          {isAtEnd && (
-            <View style={styles.endOfFeedContainer}>
-              <Text style={styles.endOfFeedIcon}>🎉</Text>
-              <Text style={styles.endOfFeedText}>You've seen all the latest dishes!</Text>
-              <TouchableOpacity style={styles.refreshButton} onPress={refreshFeed}>
-                <Text style={styles.refreshButtonText}>Refresh Feed</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* Restaurant mode indicator */}
-          {isRestaurantMode && (
-            <View style={styles.restaurantModeIndicator}>
-              <Text style={styles.restaurantModeText}>
-                📍 {currentItem.restaurantName}
-              </Text>
-            </View>
-          )}
+        <Animated.View style={[styles.cardContainer, cardAnimatedStyle]}>
+          <TapGestureHandler
+            ref={singleTapRef}
+            onGestureEvent={singleTapGestureHandler}
+            waitFor={doubleTapRef}
+          >
+            <Animated.View style={styles.gestureContainer}>
+              <TapGestureHandler
+                ref={doubleTapRef}
+                numberOfTaps={2}
+                onGestureEvent={doubleTapGestureHandler}
+              >
+                <Animated.View style={styles.gestureContainer}>
+                  <EnhancedFeedCard
+                    dish={currentItem}
+                    isActive={true}
+                    onSave={handleSave}
+                    onShare={handleShare}
+                    onReviews={handleReviews}
+                    onAddToCart={handleAddToCart}
+                    onMenu={handleMenu}
+                    onLocationPress={handleLocationPress}
+                    onFilterPress={handleFilterPress}
+                    onSearchPress={handleSearchPress}
+                    onVideoPress={handleVideoTap}
+                  />
+                </Animated.View>
+              </TapGestureHandler>
+            </Animated.View>
+          </TapGestureHandler>
         </Animated.View>
-      </PanGestureHandler>
+      </TapGestureHandler>
+
+      {/* Loading more indicator */}
+      {loadingMore && (
+        <View style={styles.loadingMoreContainer}>
+          <Text style={styles.loadingMoreText}>Loading more...</Text>
+        </View>
+      )}
+
+      {/* End of feed indicator */}
+      {isAtEnd && (
+        <View style={styles.endOfFeedContainer}>
+          <Text style={styles.endOfFeedIcon}>🎉</Text>
+          <Text style={styles.endOfFeedText}>You've seen all the latest dishes!</Text>
+          <TouchableOpacity style={styles.refreshButtonSmall} onPress={refreshFeed}>
+            <Text style={styles.refreshButtonText}>Refresh Feed</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Restaurant mode indicator */}
+      {isRestaurantMode && (
+        <View style={styles.restaurantModeIndicator}>
+          <Text style={styles.restaurantModeText}>
+            📍 {currentItem?.restaurantName}
+          </Text>
+        </View>
+      )}
 
       {/* Swipe Instructions Overlay */}
       <SwipeInstructions 
         visible={showInstructions}
         onDismiss={() => setShowInstructions(false)}
       />
-
-      {/* Left swipe detector */}
-      <PanGestureHandler
-        onHandlerStateChange={({ nativeEvent }) => {
-          if (nativeEvent.state === State.END && nativeEvent.translationX < -100) {
-            handleSwipeLeft()
-          }
-        }}
-      >
-        <View style={styles.leftSwipeArea} />
-      </PanGestureHandler>
+      
+      {/* Loading overlay for transitions */}
+      <LoadingOverlay visible={gestureActive.value && loading} />
     </GestureHandlerRootView>
   )
 }
@@ -375,32 +442,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
+  backgroundCard: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
   cardContainer: {
     flex: 1,
+    zIndex: 2,
   },
-  leftSwipeArea: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: 100,
-    height: '100%',
-    backgroundColor: 'transparent',
+  gestureContainer: {
+    flex: 1,
   },
   
   // Loading states
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 40,
-  },
-  loadingText: {
-    color: '#fff',
-    fontSize: 16,
-    marginTop: 20,
-    textAlign: 'center',
-  },
   loadingMoreContainer: {
     position: 'absolute',
     bottom: 100,
@@ -412,11 +470,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
     marginHorizontal: 50,
+    zIndex: 100,
   },
   loadingMoreText: {
     color: '#fff',
     fontSize: 14,
-    marginTop: 8,
+    fontWeight: '500',
   },
 
   // Error states
@@ -486,11 +545,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 8,
+    marginBottom: 10,
+  },
+  refreshButton: {
+    backgroundColor: '#333',
   },
   retryButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 
   // End of feed
@@ -503,6 +567,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.8)',
     padding: 20,
     borderRadius: 15,
+    zIndex: 100,
   },
   endOfFeedIcon: {
     fontSize: 32,
@@ -514,7 +579,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 15,
   },
-  refreshButton: {
+  refreshButtonSmall: {
     backgroundColor: '#FF6B00',
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -533,6 +598,7 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     alignItems: 'center',
+    zIndex: 100,
   },
   restaurantModeText: {
     backgroundColor: 'rgba(255, 107, 0, 0.9)',
