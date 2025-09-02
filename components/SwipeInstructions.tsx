@@ -134,9 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 60,
     color: 'white',
     fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)'
   },
   instructionText: {
     fontSize: 18,
@@ -145,9 +143,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 30,
     lineHeight: 24,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2
+    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)'
   },
   additionalInstructions: {
     alignItems: 'center',
@@ -158,8 +154,6 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.9)',
     textAlign: 'center',
     fontWeight: '500',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2
+    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)'
   }
 })

@@ -206,13 +206,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
     elevation: 5
   },
   actionIcon: {
@@ -222,9 +216,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
     fontWeight: '600',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
+    textShadow: '0px 1px 2px rgba(0, 0, 0, 0.8)'
   },
   bottomContent: {
     paddingHorizontal: 20,
@@ -239,18 +231,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 8,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
+    textShadow: '0px 1px 2px rgba(0, 0, 0, 0.8)'
   },
   description: {
     fontSize: 16,
     color: 'white',
     lineHeight: 22,
     marginBottom: 12,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
+    textShadow: '0px 1px 2px rgba(0, 0, 0, 0.8)'
   },
   restaurantRow: {
     flexDirection: 'row',
@@ -265,17 +253,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'white',
     fontWeight: '600',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
+    textShadow: '0px 1px 2px rgba(0, 0, 0, 0.8)'
   },
   deliveryTime: {
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.9)',
     marginLeft: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
+    textShadow: '0px 1px 2px rgba(0, 0, 0, 0.8)'
   },
   ratingsContainer: {
     flexDirection: 'row',
@@ -320,22 +304,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
+    textShadow: '0px 1px 2px rgba(0, 0, 0, 0.8)'
   },
   addToCartButton: {
     backgroundColor: '#FF6B00',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
     elevation: 5
   },
   addToCartText: {
