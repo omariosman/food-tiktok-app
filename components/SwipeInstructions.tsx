@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  Animated
+  Animated,
+  Platform
 } from 'react-native'
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window')
@@ -17,13 +18,14 @@ interface SwipeInstructionsProps {
 export default function SwipeInstructions({ onDismiss }: SwipeInstructionsProps) {
   const animatedValue = useRef(new Animated.Value(0)).current
   const fadeValue = useRef(new Animated.Value(0)).current
+  const useNativeDriver = Platform.OS !== 'web'
 
   useEffect(() => {
     // Fade in the overlay
     Animated.timing(fadeValue, {
       toValue: 1,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver,
     }).start()
 
     // Animate the arrow continuously
@@ -32,12 +34,12 @@ export default function SwipeInstructions({ onDismiss }: SwipeInstructionsProps)
         Animated.timing(animatedValue, {
           toValue: 1,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver,
         }),
         Animated.timing(animatedValue, {
           toValue: 0,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver,
         }),
       ]).start(() => {
         animateArrows() // Loop the animation
@@ -51,7 +53,7 @@ export default function SwipeInstructions({ onDismiss }: SwipeInstructionsProps)
     Animated.timing(fadeValue, {
       toValue: 0,
       duration: 200,
-      useNativeDriver: true,
+      useNativeDriver,
     }).start(() => {
       onDismiss()
     })
