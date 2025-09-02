@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Text
 } from 'react-native'
-import { Video, AVPlaybackStatus } from 'expo-av'
+import { VideoView, useVideoPlayer } from 'expo-video'
 import { LinearGradient } from 'expo-linear-gradient'
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window')
@@ -30,7 +30,11 @@ export default function MediaPlayer({
 }: MediaPlayerProps) {
   const [isMuted, setIsMuted] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
-  const videoRef = useRef<Video>(null)
+  const player = useVideoPlayer(mediaUri, (player) => {
+    player.loop = true
+    player.play()
+    player.muted = isMuted
+  })
   const lastTap = useRef<number | null>(null)
 
   const handleTap = () => {
@@ -53,7 +57,9 @@ export default function MediaPlayer({
   }
 
   const toggleMute = () => {
-    setIsMuted(!isMuted)
+    const newMutedState = !isMuted
+    setIsMuted(newMutedState)
+    player.muted = newMutedState
   }
 
   if (mediaType === 'video') {
@@ -66,16 +72,13 @@ export default function MediaPlayer({
           delayLongPress={500}
           activeOpacity={1}
         >
-          <Video
-            ref={videoRef}
+          <VideoView
             style={styles.video}
-            source={{ uri: mediaUri }}
-            shouldPlay={true}
-            isLooping={true}
-            isMuted={isMuted}
-            resizeMode="cover"
-            onLoad={handleVideoLoad}
-            onError={handleVideoError}
+            player={player}
+            allowsFullscreen
+            allowsPictureInPicture
+            contentFit="cover"
+            onLoadStart={handleVideoLoad}
           />
 
           {/* Mute/Unmute button */}
@@ -90,8 +93,7 @@ export default function MediaPlayer({
           {/* Dark gradient overlay at bottom */}
           <LinearGradient
             colors={['transparent', 'rgba(0,0,0,0.7)']}
-            style={styles.gradient}
-            pointerEvents="none"
+            style={[styles.gradient, { pointerEvents: 'none' }]}
           />
 
           {children}
@@ -128,8 +130,7 @@ export default function MediaPlayer({
         {/* Dark gradient overlay at bottom */}
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.7)']}
-          style={styles.gradient}
-          pointerEvents="none"
+          style={[styles.gradient, { pointerEvents: 'none' }]}
         />
 
         {children}
