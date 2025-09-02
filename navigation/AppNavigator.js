@@ -7,7 +7,7 @@ import { Text } from 'react-native'
 import { useAuth } from '../contexts/AuthContext'
 import LoginScreen from '../screens/LoginScreen'
 import SignupScreen from '../screens/SignupScreen'
-import ExploreScreen from '../screens/ExploreScreen'
+import FeedScreen from '../screens/FeedScreen'
 import SavedScreen from '../screens/SavedScreen'
 import DiscoverScreen from '../screens/DiscoverScreen'
 import ProfileScreen from '../screens/ProfileScreen'
@@ -47,7 +47,7 @@ function MainTabs() {
     >
       <Tab.Screen 
         name="Explore" 
-        component={ExploreScreen}
+        component={FeedScreen}
         options={{
           tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🍕</Text>
         }}
