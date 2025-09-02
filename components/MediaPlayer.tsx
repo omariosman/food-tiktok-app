@@ -6,10 +6,20 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
-  Text
+  Text,
+  Platform
 } from 'react-native'
-import { VideoView, useVideoPlayer } from 'expo-video'
 import { LinearGradient } from 'expo-linear-gradient'
+
+// Conditionally import expo-video only for native platforms
+let VideoView: any = null
+let useVideoPlayer: any = null
+
+if (Platform.OS !== 'web') {
+  const expoVideo = require('expo-video')
+  VideoView = expoVideo.VideoView
+  useVideoPlayer = expoVideo.useVideoPlayer
+}
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -30,11 +40,14 @@ export default function MediaPlayer({
 }: MediaPlayerProps) {
   const [isMuted, setIsMuted] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
-  const player = useVideoPlayer(mediaUri, (player) => {
+  
+  // Only use expo-video on native platforms
+  const player = Platform.OS !== 'web' && useVideoPlayer ? useVideoPlayer(mediaUri, (player) => {
     player.loop = true
     player.play()
     player.muted = isMuted
-  })
+  }) : null
+  
   const lastTap = useRef<number | null>(null)
 
   const handleTap = () => {
@@ -59,7 +72,9 @@ export default function MediaPlayer({
   const toggleMute = () => {
     const newMutedState = !isMuted
     setIsMuted(newMutedState)
-    player.muted = newMutedState
+    if (player) {
+      player.muted = newMutedState
+    }
   }
 
   if (mediaType === 'video') {
@@ -72,14 +87,32 @@ export default function MediaPlayer({
           delayLongPress={500}
           activeOpacity={1}
         >
-          <VideoView
-            style={styles.video}
-            player={player}
-            allowsFullscreen
-            allowsPictureInPicture
-            contentFit="cover"
-            onLoadStart={handleVideoLoad}
-          />
+{Platform.OS !== 'web' && VideoView && player ? (
+            <VideoView
+              style={styles.video}
+              player={player}
+              allowsFullscreen
+              allowsPictureInPicture
+              contentFit="cover"
+              onLoadStart={handleVideoLoad}
+            />
+          ) : (
+            // Fallback for web platform - use native video element
+            <video
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
+              src={mediaUri}
+              autoPlay
+              loop
+              muted={isMuted}
+              playsInline
+              onLoadStart={handleVideoLoad}
+              onError={handleVideoError}
+            />
+          )}
 
           {/* Mute/Unmute button */}
           <TouchableOpacity style={styles.soundButton} onPress={toggleMute}>
