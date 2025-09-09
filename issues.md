@@ -4,7 +4,7 @@ Description
 Think harder about setting up the foundational architecture for a food delivery MVP using React Native, Node.js, and Supabase.
 Tasks
 1. CREATE
-markdown- [ ] Initialize monorepo structure with the following:
+- [ ] Initialize monorepo structure with the following:
   - /backend (Node.js + Express + TypeScript)
   - /mobile (React Native + TypeScript)
   - /shared (shared types and utilities)
@@ -16,7 +16,7 @@ markdown- [ ] Initialize monorepo structure with the following:
 - [ ] Configure environment variables for both environments
 - [ ] Setup Git repository with proper .gitignore
 2. PLAN
-markdownThink harder about the MVP architecture:
+Think harder about the MVP architecture:
 - [ ] Design simplified database schema in Supabase:
   ```sql
   -- Core tables only for MVP
@@ -31,7 +31,6 @@ markdownThink harder about the MVP architecture:
 
 
 #### 3. TEST
-```markdown
 - [ ] Unit Tests:
   - Test database connection to Supabase
   - Test environment variable loading
@@ -41,7 +40,7 @@ markdownThink harder about the MVP architecture:
   - Test navigation between screens works
   - Verify Supabase connection from mobile app
 4. DEPLOY
-markdown- [ ] Setup development environment locally
+- [ ] Setup development environment locally
 - [ ] Configure Supabase project settings
 - [ ] Document setup instructions in README
 - [ ] Create docker-compose for local development (PostgreSQL mirror)
@@ -52,7 +51,7 @@ Description
 Think harder about implementing a simple but secure authentication system using Supabase Auth for the MVP.
 Tasks
 1. CREATE
-markdown- [ ] Implement Supabase Auth in backend:
+- [ ] Implement Supabase Auth in backend:
   - Sign up with email/password
   - Sign in with email/password
   - Sign out functionality
@@ -64,13 +63,13 @@ markdown- [ ] Implement Supabase Auth in backend:
 - [ ] Setup auth state management using React Context
 - [ ] Configure protected routes in React Navigation
 2. PLAN
-markdownThink harder about auth flow:
+Think harder about auth flow:
 - [ ] Design JWT token handling with Supabase
 - [ ] Plan session persistence strategy
 - [ ] Define user roles (customer only for MVP)
 - [ ] Map out auth error handling scenarios
 3. TEST
-markdown- [ ] Unit Tests:
+- [ ] Unit Tests:
   - Test user registration validation
   - Test login with correct/incorrect credentials
   - Test token refresh mechanism
@@ -81,7 +80,7 @@ markdown- [ ] Unit Tests:
   - Password reset flow test
   - Session persistence after app restart
 4. DEPLOY
-markdown- [ ] Configure Supabase Auth settings (email templates, redirects)
+- [ ] Configure Supabase Auth settings (email templates, redirects)
 - [ ] Setup auth environment variables
 - [ ] Test auth flow in development environment
 - [ ] Document auth API endpoints
@@ -92,7 +91,7 @@ Description
 Think harder about creating the core restaurant browsing and menu viewing experience for the MVP.
 Tasks
 1. CREATE
-markdown- [ ] Backend APIs:
+- [ ] Backend APIs:
   - GET /restaurants (with pagination and basic filters)
   - GET /restaurants/:id (restaurant details)
   - GET /restaurants/:id/menu (menu items grouped by category)
@@ -105,13 +104,13 @@ markdown- [ ] Backend APIs:
 - [ ] Implement location services for nearby restaurants
 - [ ] Add basic search functionality (use Supabase full-text search)
 2. PLAN
-markdownThink harder about restaurant features:
+Think harder about restaurant features:
 - [ ] Design restaurant card component
 - [ ] Plan menu categorization (Starters, Mains, Desserts, Drinks)
 - [ ] Define delivery radius calculation
 - [ ] Setup image optimization strategy
 3. TEST
-markdown- [ ] Unit Tests:
+- [ ] Unit Tests:
   - Test restaurant filtering logic
   - Test distance calculation
   - Test menu grouping by category
@@ -122,7 +121,7 @@ markdown- [ ] Unit Tests:
   - View restaurant details and menu
   - Filter restaurants by delivery time
 4. DEPLOY
-markdown- [ ] Seed database with sample restaurants (use context7 for restaurant data)
+- [ ] Seed database with sample restaurants (use context7 for restaurant data)
 - [ ] Configure Supabase Storage for restaurant images
 - [ ] Setup PostGIS extension in Supabase
 - [ ] Test location-based queries
@@ -133,7 +132,7 @@ Description
 Think harder about implementing a simple but effective cart system and order placement flow for the MVP.
 Tasks
 1. CREATE
-markdown- [ ] Cart Management:
+- [ ] Cart Management:
   - Local cart state using React Context
   - Add/remove items from cart
   - Update quantities
@@ -149,13 +148,13 @@ markdown- [ ] Cart Management:
   - Order confirmation screen
   - Order history screen
 2. PLAN
-markdownThink harder about order flow:
+Think harder about order flow:
 - [ ] Design cart persistence strategy (AsyncStorage)
 - [ ] Plan order status flow (pending -> confirmed -> preparing -> delivered)
 - [ ] Define order validation rules
 - [ ] Setup real-time order updates using Supabase subscriptions
 3. TEST
-markdown- [ ] Unit Tests:
+- [ ] Unit Tests:
   - Test cart calculations
   - Test order validation
   - Test cart persistence
@@ -166,7 +165,7 @@ markdown- [ ] Unit Tests:
   - View order history
   - Track order status updates
 4. DEPLOY
-markdown- [ ] Configure Supabase real-time for order updates
+- [ ] Configure Supabase real-time for order updates
 - [ ] Setup order notification system
 - [ ] Test complete order flow
 - [ ] Document order status workflow
@@ -177,7 +176,7 @@ Description
 Think harder about integrating Paymob payment gateway for secure payment processing in the MVP. Use context7 to access Paymob API documentation.
 Tasks
 1. CREATE
-markdown- [ ] Paymob Integration:
+- [ ] Paymob Integration:
   - Setup Paymob account and get API keys (use context7 for Paymob docs)
   - Implement payment token generation
   - Create payment processing endpoint
@@ -190,13 +189,13 @@ markdown- [ ] Paymob Integration:
   - Add balance to user profile
   - Deduct from wallet option
 2. PLAN
-markdownThink harder about payment flow:
+Think harder about payment flow:
 - [ ] Design payment state machine
 - [ ] Plan payment error handling
 - [ ] Define refund process (manual for MVP)
 - [ ] Setup payment verification logic
 3. TEST
-markdown- [ ] Unit Tests:
+- [ ] Unit Tests:
   - Test payment token generation
   - Test payment amount calculation
   - Test webhook signature verification
@@ -207,7 +206,7 @@ markdown- [ ] Unit Tests:
   - Payment failure handling
   - View payment history
 4. DEPLOY
-markdown- [ ] Configure Paymob webhooks (use context7 for webhook setup)
+- [ ] Configure Paymob webhooks (use context7 for webhook setup)
 - [ ] Setup test payment credentials
 - [ ] Test payment flow with test cards
 - [ ] Document payment integration
@@ -218,7 +217,7 @@ Description
 Think harder about implementing a simple review system to build trust and improve restaurant quality for the MVP.
 Tasks
 1. CREATE
-markdown- [ ] Review APIs:
+- [ ] Review APIs:
   - POST /reviews (submit review)
   - GET /restaurants/:id/reviews (get reviews)
   - PUT /reviews/:id (update own review)
@@ -230,13 +229,13 @@ markdown- [ ] Review APIs:
   - Review summary statistics
 - [ ] Update restaurant ratings automatically
 2. PLAN
-markdownThink harder about review system:
+Think harder about review system:
 - [ ] Design review validation (one review per order)
 - [ ] Plan rating calculation algorithm
 - [ ] Define review moderation (post-publish for MVP)
 - [ ] Setup review notifications
 3. TEST
-markdown- [ ] Unit Tests:
+- [ ] Unit Tests:
   - Test rating calculation
   - Test review validation
   - Test review permissions
@@ -247,7 +246,7 @@ markdown- [ ] Unit Tests:
   - Edit own review
   - Filter reviews by rating
 4. DEPLOY
-markdown- [ ] Setup review table with constraints
+- [ ] Setup review table with constraints
 - [ ] Configure review notifications
 - [ ] Test review submission flow
 - [ ] Add sample reviews to seed data
@@ -258,7 +257,7 @@ Description
 Think harder about implementing search and filtering to help users find food quickly in the MVP.
 Tasks
 1. CREATE
-markdown- [ ] Search Implementation:
+- [ ] Search Implementation:
   - Restaurant name search (Supabase FTS)
   - Dish search across all restaurants
   - Recent searches storage
@@ -273,13 +272,13 @@ markdown- [ ] Search Implementation:
   - Active filters display
   - Clear filters option
 2. PLAN
-markdownThink harder about search optimization:
+Think harder about search optimization:
 - [ ] Design search indexing strategy
 - [ ] Plan filter combination logic
 - [ ] Define search ranking algorithm
 - [ ] Setup search analytics
 3. TEST
-markdown- [ ] Unit Tests:
+- [ ] Unit Tests:
   - Test search query parsing
   - Test filter combination logic
   - Test search result ranking
@@ -290,7 +289,7 @@ markdown- [ ] Unit Tests:
   - Clear search and filters
   - Search for specific dish
 4. DEPLOY
-markdown- [ ] Configure Supabase full-text search
+- [ ] Configure Supabase full-text search
 - [ ] Create search indexes
 - [ ] Test search performance
 - [ ] Document search API
@@ -301,7 +300,7 @@ Description
 Think harder about implementing push notifications for order updates and promotions in the MVP. Use context7 for Firebase Cloud Messaging documentation.
 Tasks
 1. CREATE
-markdown- [ ] Notification Setup:
+- [ ] Notification Setup:
   - Configure Firebase Cloud Messaging (use context7 for FCM docs)
   - Implement device token management
   - Create notification sending service
@@ -314,13 +313,13 @@ markdown- [ ] Notification Setup:
   - Toggle notifications on/off
   - Select notification types
 2. PLAN
-markdownThink harder about notification strategy:
+Think harder about notification strategy:
 - [ ] Design notification payload structure
 - [ ] Plan notification scheduling
 - [ ] Define notification priority levels
 - [ ] Setup notification analytics
 3. TEST
-markdown- [ ] Unit Tests:
+- [ ] Unit Tests:
   - Test token registration
   - Test notification payload creation
   - Test notification permissions
@@ -331,7 +330,7 @@ markdown- [ ] Unit Tests:
   - Open app from notification
   - Disable notifications
 4. DEPLOY
-markdown- [ ] Configure FCM project (use context7 for setup guide)
+- [ ] Configure FCM project (use context7 for setup guide)
 - [ ] Setup notification certificates for iOS
 - [ ] Test notifications on real devices
 - [ ] Document notification types
@@ -342,7 +341,7 @@ Description
 Think harder about creating a minimal admin dashboard for restaurant and order management in the MVP.
 Tasks
 1. CREATE
-markdown- [ ] Admin Web Dashboard (Simple React app):
+- [ ] Admin Web Dashboard (Simple React app):
   - Admin login with Supabase Auth
   - Restaurant management (add, edit, toggle active)
   - Menu management (add, edit items)
@@ -354,13 +353,13 @@ markdown- [ ] Admin Web Dashboard (Simple React app):
   - Order status updates
   - Basic reporting endpoints
 2. PLAN
-markdownThink harder about admin features:
+Think harder about admin features:
 - [ ] Design role-based access (admin vs restaurant owner)
 - [ ] Plan dashboard layout
 - [ ] Define key metrics to display
 - [ ] Setup data export functionality
 3. TEST
-markdown- [ ] Unit Tests:
+- [ ] Unit Tests:
   - Test admin authentication
   - Test CRUD operations
   - Test data validation
@@ -371,7 +370,7 @@ markdown- [ ] Unit Tests:
   - Update menu items
   - Process orders
 4. DEPLOY
-markdown- [ ] Deploy admin dashboard to Vercel/Netlify
+- [ ] Deploy admin dashboard to Vercel/Netlify
 - [ ] Configure admin roles in Supabase
 - [ ] Setup admin notifications
 - [ ] Document admin features
@@ -382,7 +381,7 @@ Description
 Think harder about comprehensive testing to ensure MVP stability and reliability. Use playwright for E2E testing.
 Tasks
 1. CREATE
-markdown- [ ] Testing Infrastructure:
+- [ ] Testing Infrastructure:
   - Setup Jest for unit tests
   - Configure React Native Testing Library
   - Setup Playwright for E2E tests (use playwright)
@@ -393,13 +392,13 @@ markdown- [ ] Testing Infrastructure:
   - Integration tests
   - E2E user journey tests
 2. PLAN
-markdownThink harder about testing strategy:
+Think harder about testing strategy:
 - [ ] Define critical user paths to test
 - [ ] Plan test data management
 - [ ] Setup CI/CD test automation
 - [ ] Define acceptance criteria
 3. TEST
-markdown- [ ] Unit Tests (minimum 70% coverage):
+- [ ] Unit Tests (minimum 70% coverage):
   - Test all API endpoints
   - Test business logic functions
   - Test React components
@@ -411,7 +410,7 @@ markdown- [ ] Unit Tests (minimum 70% coverage):
   - Review submission flow
   - Admin dashboard operations
 4. DEPLOY
-markdown- [ ] Setup GitHub Actions for test automation
+- [ ] Setup GitHub Actions for test automation
 - [ ] Configure test reporting
 - [ ] Document testing procedures
 - [ ] Create test checklist for releases
@@ -422,7 +421,7 @@ Description
 Think harder about deploying the MVP to production and preparing for launch.
 Tasks
 1. CREATE
-markdown- [ ] Production Setup:
+- [ ] Production Setup:
   - Deploy backend to Railway/Render
   - Configure production Supabase project
   - Setup CDN for images (Cloudflare)
@@ -433,13 +432,13 @@ markdown- [ ] Production Setup:
   - Prepare store listings
   - Submit to app stores
 2. PLAN
-markdownThink harder about deployment strategy:
+Think harder about deployment strategy:
 - [ ] Plan rollback procedures
 - [ ] Define monitoring alerts
 - [ ] Setup error tracking (Sentry)
 - [ ] Plan soft launch strategy
 3. TEST
-markdown- [ ] Production Testing:
+- [ ] Production Testing:
   - Load testing with k6
   - Security testing
   - Performance testing
@@ -450,7 +449,7 @@ markdown- [ ] Production Testing:
   - Payment flow verification
   - Cross-device testing
 4. DEPLOY
-markdown- [ ] Deploy to production environment
+- [ ] Deploy to production environment
 - [ ] Configure monitoring (use context7 for monitoring tools)
 - [ ] Setup backup strategies
 - [ ] Launch MVP to initial users
@@ -458,21 +457,21 @@ markdown- [ ] Deploy to production environment
 📌 Low Priority Issues (Post-MVP)
 Issue #12: Order Tracking System
 Priority: Low | Sprint: 7-8
-markdownThink harder about real-time order tracking:
+Think harder about real-time order tracking:
 - [ ] CREATE: Implement Socket.io for real-time updates
 - [ ] PLAN: Design tracking states and map integration
 - [ ] TEST: Use playwright for real-time tracking tests
 - [ ] DEPLOY: Setup WebSocket infrastructure
 Issue #13: Social Features
 Priority: Low | Sprint: 8-9
-markdownThink harder about social engagement:
+Think harder about social engagement:
 - [ ] CREATE: Follow system, activity feed, food court feature
 - [ ] PLAN: Design social graph and feed algorithm
 - [ ] TEST: Use playwright for social interaction tests
 - [ ] DEPLOY: Configure social feature flags
 Issue #14: Performance Optimization
 Priority: Low | Sprint: 10
-markdownThink harder about app performance:
+Think harder about app performance:
 - [ ] CREATE: Implement caching, lazy loading, code splitting
 - [ ] PLAN: Design caching strategy and CDN setup
 - [ ] TEST: Performance benchmarks and load tests
