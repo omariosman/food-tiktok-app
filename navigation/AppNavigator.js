@@ -13,6 +13,10 @@ import SavedScreen from '../screens/SavedScreen'
 import DiscoverScreen from '../screens/DiscoverScreen'
 import ActivityScreen from '../screens/ActivityScreen'
 import ProfileScreen from '../screens/ProfileScreen'
+import CartScreen from '../screens/CartScreen'
+import CheckoutScreen from '../screens/CheckoutScreen'
+import OrderConfirmationScreen from '../screens/OrderConfirmationScreen'
+import OrderHistoryScreen from '../screens/OrderHistoryScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -87,6 +91,18 @@ function MainTabs() {
   )
 }
 
+function MainStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MainTabs" component={MainTabs} />
+      <Stack.Screen name="Cart" component={CartScreen} />
+      <Stack.Screen name="Checkout" component={CheckoutScreen} />
+      <Stack.Screen name="OrderConfirmation" component={OrderConfirmationScreen} />
+      <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} />
+    </Stack.Navigator>
+  )
+}
+
 export default function AppNavigator() {
   const { user, loading } = useAuth()
 
@@ -96,7 +112,7 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer>
-      {user ? <MainTabs /> : <AuthStack />}
+      {user ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
   )
 }
