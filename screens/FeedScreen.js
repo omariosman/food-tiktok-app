@@ -93,7 +93,7 @@ const MOCK_DATA = [
   }
 ]
 
-export default function FeedScreen() {
+export default function FeedScreen({ navigation }) {
   const [currentRestaurantIndex, setCurrentRestaurantIndex] = useState(0)
   const [currentMealIndices, setCurrentMealIndices] = useState({})
   const [reviewModalVisible, setReviewModalVisible] = useState(false)
@@ -394,7 +394,10 @@ export default function FeedScreen() {
 
           {/* Bottom Buttons */}
           <View style={styles.bottomButtons}>
-            <TouchableOpacity style={styles.menuButton}>
+            <TouchableOpacity 
+              style={styles.menuButton}
+              onPress={() => navigation.navigate('Restaurant', { restaurant })}
+            >
               <Text style={styles.menuIcon}>📋</Text>
               <Text style={styles.menuText}>Menu</Text>
             </TouchableOpacity>
