@@ -7,9 +7,11 @@ import { Text } from 'react-native'
 import { useAuth } from '../contexts/AuthContext'
 import LoginScreen from '../screens/LoginScreen'
 import SignupScreen from '../screens/SignupScreen'
+import FeedScreen from '../screens/FeedScreen'
 import ExploreScreen from '../screens/ExploreScreen'
 import SavedScreen from '../screens/SavedScreen'
 import DiscoverScreen from '../screens/DiscoverScreen'
+import ActivityScreen from '../screens/ActivityScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 
 const Stack = createStackNavigator()
@@ -27,6 +29,7 @@ function AuthStack() {
 function MainTabs() {
   return (
     <Tab.Navigator
+      initialRouteName="Feed"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
@@ -46,10 +49,10 @@ function MainTabs() {
       }}
     >
       <Tab.Screen 
-        name="Explore" 
-        component={ExploreScreen}
+        name="Feed" 
+        component={FeedScreen}
         options={{
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🍕</Text>
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text>
         }}
       />
       <Tab.Screen 
@@ -64,6 +67,13 @@ function MainTabs() {
         component={DiscoverScreen}
         options={{
           tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🔍</Text>
+        }}
+      />
+      <Tab.Screen 
+        name="Activity" 
+        component={ActivityScreen}
+        options={{
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🔔</Text>
         }}
       />
       <Tab.Screen 
