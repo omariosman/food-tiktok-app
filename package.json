@@ -6,7 +6,20 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:web": "expo export --platform web",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:feed": "playwright test feed.spec.ts",
+    "test:e2e:flows": "playwright test user-flows.spec.ts",
+    "test:e2e:edge": "playwright test edge-cases.spec.ts",
+    "test:e2e:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+    "test:e2e:desktop": "playwright test --project='chromium' --project='firefox' --project='webkit'",
+    "test:e2e:report": "playwright show-report e2e/reports/html",
+    "test:e2e:install": "playwright install",
+    "test:e2e:install-deps": "playwright install-deps"
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
@@ -24,10 +37,13 @@
     "react-native-gesture-handler": "~2.24.0",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
-    "react-native-web": "^0.20.0"
+    "react-native-web": "^0.20.0",
+    "expo-av": "~15.1.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@playwright/test": "^1.55.0",
+    "playwright": "^1.55.0"
   },
   "private": true
 }
